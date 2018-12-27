@@ -69,6 +69,7 @@ define php::extension (
   $zend              = false,
   $settings          = {},
   $settings_prefix   = false,
+  $ini_prefix        = undef,
   $sapi              = 'ALL',
   $responsefile      = undef,
 ) {
@@ -182,7 +183,7 @@ define php::extension (
 
   $config_root_ini = pick_default($::php::config_root_ini, $::php::params::config_root_ini)
   ::php::config { $title:
-    file    => "${config_root_ini}/${lowercase_title}.ini",
+    file    => "${config_root_ini}/${ini_prefix}${lowercase_title}.ini",
     config  => $final_settings,
     require => $package_depends,
   }
