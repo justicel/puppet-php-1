@@ -69,8 +69,8 @@ define php::extension (
   $zend              = false,
   $settings          = {},
   $settings_prefix   = false,
-  $ini_prefix        = undef,
   $sapi              = 'ALL',
+  $priority          = '20',
   $responsefile      = undef,
 ) {
 
@@ -183,7 +183,7 @@ define php::extension (
 
   $config_root_ini = pick_default($::php::config_root_ini, $::php::params::config_root_ini)
   ::php::config { $title:
-    file    => "${config_root_ini}/${ini_prefix}${lowercase_title}.ini",
+    file    => "${config_root_ini}/${lowercase_title}.ini",
     config  => $final_settings,
     require => $package_depends,
   }
@@ -209,8 +209,19 @@ define php::extension (
       }
     }
 
+    file_line { "Set_prio ${lowercase_title}":
+       path              => "${config_root_ini}/${lowercase_title}.ini",
+       line              => "; priority=${priority}",
+       require           => Package[$real_package],
+       match             => '^; priority\=',
+       match_for_absence => true,
+       multiple          => false,
+    }
+
     if $::php::fpm {
       Package[$::php::fpm::package] ~> Exec[$cmd]
     }
+
+    File_line["Set_prio ${lowercase_title}"] ~> Exec[$cmd]
   }
 }
