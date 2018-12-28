@@ -62,6 +62,7 @@ define php::extension (
   $source            = undef,
   $pecl_source       = undef,
   $so_name           = $name,
+  $ini_prefix        = undef,
   $php_api_version   = undef,
   $package_prefix    = $::php::package_prefix,
   $header_packages   = [],
@@ -183,7 +184,7 @@ define php::extension (
 
   $config_root_ini = pick_default($::php::config_root_ini, $::php::params::config_root_ini)
   ::php::config { $title:
-    file    => "${config_root_ini}/${lowercase_title}.ini",
+    file    => "${config_root_ini}/${ini_prefix}${lowercase_title}.ini",
     config  => $final_settings,
     require => $package_depends,
   }
