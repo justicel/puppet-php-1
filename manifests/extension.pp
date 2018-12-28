@@ -196,16 +196,16 @@ define php::extension (
   $ext_tool_enabled  = pick_default($::php::ext_tool_enabled, $::php::params::ext_tool_enabled)
 
   if $::osfamily == 'Debian' and $ext_tool_enabled {
-    $cmd = "${ext_tool_enable} -s ${sapi} ${lowercase_title}"
+    $cmd = "${ext_tool_enable} -s ${sapi} ${ini_prefix}${lowercase_title}"
 
     if $sapi == 'ALL' {
       exec { $cmd:
-        onlyif  => "${ext_tool_query} -s cli -m ${lowercase_title} | /bin/grep 'No module matches ${lowercase_title}'",
+        onlyif  => "${ext_tool_query} -s cli -m ${ini_prefix}${lowercase_title} | /bin/grep 'No module matches ${ini_prefix}${lowercase_title}'",
         require =>::Php::Config[$title],
       }
     } else {
       exec { $cmd:
-        onlyif  => "${ext_tool_query} -s ${sapi} -m ${lowercase_title} | /bin/grep 'No module matches ${lowercase_title}'",
+        onlyif  => "${ext_tool_query} -s ${sapi} -m ${ini_prefix}${lowercase_title} | /bin/grep 'No module matches ${ini_prefix}${lowercase_title}'",
         require =>::Php::Config[$title],
       }
     }
